@@ -12,7 +12,7 @@ import (
 func generateDB() (*sql.DB, error) {
 	return sql.Open(
 		"postgres",
-		"host=postgresql dbname=go-template user=go-template password=password sslmode=disable")
+		`host=postgresql dbname=go-template user=go-template password=password sslmode=disable`) // TODO: change this
 }
 
 func main() {
