@@ -2,5 +2,19 @@ FROM golang:1.19.9
 
 # llのエイリアスを指定
 RUN echo "alias ll='ls -l'" >> /root/.bashrc
-RUN touch /root/.bash_profile
-RUN echo 'source ~/.bashrc' >> /root/.bash_profile
+
+# プロンプト設定(ref. https://zenn.dev/daifukuninja/articles/9e903808f4147d)
+RUN apt update && apt install git vim curl -y && apt clean
+
+RUN echo "source /usr/share/bash-completion/completions/git" >> ~/.bashrc
+
+RUN curl -O https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
+RUN curl -O https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash
+RUN chmod a+x git*.*
+RUN ls -l $PWD/git*.* | awk '{print "source "$9}' >> ~/.bashrc
+
+RUN echo "GIT_PS1_SHOWDIRTYSTATE=true" >> ~/.bashrc
+RUN echo "GIT_PS1_SHOWUNTRACKEDFILES=true" >> ~/.bashrc
+RUN echo "GIT_PS1_SHOWUPSTREAM=auto" >> ~/.bashrc
+
+RUN echo 'export PS1="\[\033[01;32m\]\u@\h\[\033[01;33m\] \w \[\033[01;31m\]\$(__git_ps1 \"(%s)\") \\n\[\033[01;34m\]\\$ \[\033[00m\]"' >> ~/.bashrc
