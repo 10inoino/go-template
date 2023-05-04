@@ -24,3 +24,4 @@ RUN go install golang.org/x/tools/gopls@latest
 RUN go install github.com/rubenv/sql-migrate/...@latest
 RUN go install github.com/volatiletech/sqlboiler/v4@latest
 RUN go install github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-psql@latest
+RUN go install github.com/go-delve/delve/cmd/dlv@latest

@@ -5,14 +5,21 @@ import (
 	"example/web-service-gin/src/presentation/controller"
 	"example/web-service-gin/src/repository/postgres/repository"
 	"example/web-service-gin/src/usecase"
+	"fmt"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
 
 func generateDB() (*sql.DB, error) {
+	host := os.Getenv("PSQL_HOST")
+	dbname := os.Getenv("PSQL_DBNAME")
+	user := os.Getenv("PSQL_USER")
+	password := os.Getenv("PSQL_PASS")
+
 	return sql.Open(
 		"postgres",
-		`host=postgresql dbname=go-template user=go-template password=password sslmode=disable`) // TODO: change this
+		fmt.Sprintf("host=%s dbname=%s user=%s password=%s sslmode=disable", host, dbname, user, password))
 }
 
 func main() {
