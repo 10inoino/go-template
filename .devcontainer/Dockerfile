@@ -6,6 +6,14 @@ RUN echo "alias ll='ls -l'" >> /root/.bashrc
 # プロンプト設定(ref. https://zenn.dev/daifukuninja/articles/9e903808f4147d)
 RUN apt update && apt install git vim curl -y && apt clean
 
+# nodejs, yarnのインストール
+RUN curl https://deb.nodesource.com/setup_20.x | bash
+RUN curl https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+
+RUN apt-get update && apt-get install -y nodejs yarn
+
+# プロンプト設定
 RUN echo "source /usr/share/bash-completion/completions/git" >> ~/.bashrc
 
 RUN curl -O https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
@@ -25,3 +33,6 @@ RUN go install github.com/rubenv/sql-migrate/...@latest
 RUN go install github.com/volatiletech/sqlboiler/v4@latest
 RUN go install github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-psql@latest
 RUN go install github.com/go-delve/delve/cmd/dlv@latest
+
+# 必要なNodeのパッケージの追加（vercel）
+RUN yarn global add vercel
