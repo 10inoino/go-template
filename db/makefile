@@ -1,2 +1,2 @@
-migration:
+migrate:
 	sql-migrate up
