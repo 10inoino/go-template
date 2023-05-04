@@ -18,3 +18,9 @@ RUN echo "GIT_PS1_SHOWUNTRACKEDFILES=true" >> ~/.bashrc
 RUN echo "GIT_PS1_SHOWUPSTREAM=auto" >> ~/.bashrc
 
 RUN echo 'export PS1="\[\033[01;32m\]\u@\h\[\033[01;33m\] \w \[\033[01;31m\]\$(__git_ps1 \"(%s)\") \\n\[\033[01;34m\]\\$ \[\033[00m\]"' >> ~/.bashrc
+
+# 必要なGoのパッケージの追加（gopls, sql-migrate, sql-boiler）
+RUN go install golang.org/x/tools/gopls@latest
+RUN go install github.com/rubenv/sql-migrate/...@latest
+RUN go install github.com/volatiletech/sqlboiler/v4@latest
+RUN go install github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-psql@latest
