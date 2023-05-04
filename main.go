@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"example/web-service-gin/src/presentation/controller"
 	"example/web-service-gin/src/repository/postgres/repository"
-	"example/web-service-gin/src/usecase"
+	album_uc "example/web-service-gin/src/usecase/album"
 	"fmt"
 	"os"
 
@@ -29,11 +29,11 @@ func main() {
 		panic("failed database connection")
 	}
 	albumRepo := repository.NewAlbumRepository(db)
-	createAlbumUsecase := usecase.NewCreateAlbumUsecase(albumRepo)
-	getAlbumUsecase := usecase.NewGetAlbumUsecase(albumRepo)
-	listAlbumUsecase := usecase.NewListAlbumUsecase(albumRepo)
-	updateAlbumUsecase := usecase.NewUpdateAlbumUsecase(albumRepo)
-	deleteAlbumUsecase := usecase.NewDeleteAlbumUsecase(albumRepo)
+	createAlbumUsecase := album_uc.NewCreateAlbumUsecase(albumRepo)
+	getAlbumUsecase := album_uc.NewGetAlbumUsecase(albumRepo)
+	listAlbumUsecase := album_uc.NewListAlbumUsecase(albumRepo)
+	updateAlbumUsecase := album_uc.NewUpdateAlbumUsecase(albumRepo)
+	deleteAlbumUsecase := album_uc.NewDeleteAlbumUsecase(albumRepo)
 	albumCon := controller.NewAlbumController(
 		*createAlbumUsecase,
 		*getAlbumUsecase,
@@ -41,12 +41,14 @@ func main() {
 		*updateAlbumUsecase,
 		*deleteAlbumUsecase,
 	)
+	healthCheckCon := controller.NewHealthCheckController()
 
 	router.GET("/albums", albumCon.ListAlbums)
 	router.GET("/albums/:id", albumCon.GetAlbumByID)
 	router.POST("/albums", albumCon.CreateAlbum)
 	router.PUT("/albums", albumCon.UpdateAlbum)
 	router.DELETE("/albums/:id", albumCon.DeleteAlbum)
+	router.GET("/health", healthCheckCon.HealthCheck)
 
 	router.Run("localhost:8080")
 }

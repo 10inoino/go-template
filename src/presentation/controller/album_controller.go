@@ -2,26 +2,26 @@ package controller
 
 import (
 	"example/web-service-gin/src/domain/request"
-	"example/web-service-gin/src/usecase"
+	album_uc "example/web-service-gin/src/usecase/album"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 type AlbumController struct {
-	createAlbumUsecase usecase.CreateAlbumUsecase
-	getAlbumUsecase    usecase.GetAlbumUsecase
-	listAlbumUsecase   usecase.ListAlbumUsecase
-	updateAlbumUsecase usecase.UpdateAlbumUsecase
-	deleteAlbumUsecase usecase.DeleteAlbumUsecase
+	createAlbumUsecase album_uc.CreateAlbumUsecase
+	getAlbumUsecase    album_uc.GetAlbumUsecase
+	listAlbumUsecase   album_uc.ListAlbumUsecase
+	updateAlbumUsecase album_uc.UpdateAlbumUsecase
+	deleteAlbumUsecase album_uc.DeleteAlbumUsecase
 }
 
 func NewAlbumController(
-	createAlbumUsecase usecase.CreateAlbumUsecase,
-	getAlbumUsecase usecase.GetAlbumUsecase,
-	listAlbumUsecase usecase.ListAlbumUsecase,
-	updateAlbumUsecase usecase.UpdateAlbumUsecase,
-	deleteAlbumUsecase usecase.DeleteAlbumUsecase,
+	createAlbumUsecase album_uc.CreateAlbumUsecase,
+	getAlbumUsecase album_uc.GetAlbumUsecase,
+	listAlbumUsecase album_uc.ListAlbumUsecase,
+	updateAlbumUsecase album_uc.UpdateAlbumUsecase,
+	deleteAlbumUsecase album_uc.DeleteAlbumUsecase,
 ) *AlbumController {
 	return &AlbumController{
 		createAlbumUsecase: createAlbumUsecase,

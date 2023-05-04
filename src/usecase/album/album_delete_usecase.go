@@ -1,4 +1,4 @@
-package usecase
+package album_uc
 
 import (
 	repository_interface "example/web-service-gin/src/repository/interface"

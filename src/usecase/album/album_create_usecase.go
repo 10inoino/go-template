@@ -1,4 +1,4 @@
-package usecase
+package album_uc
 
 import (
 	"example/web-service-gin/src/domain"
