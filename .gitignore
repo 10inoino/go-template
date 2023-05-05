@@ -1,3 +1,4 @@
 # AWS credentials
 /.devcontainer/credentials
 __debug_bin
+.vercel

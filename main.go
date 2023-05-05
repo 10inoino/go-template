@@ -6,6 +6,7 @@ import (
 	"example/web-service-gin/src/repository/postgres/repository"
 	album_uc "example/web-service-gin/src/usecase/album"
 	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -20,6 +21,10 @@ func generateDB() (*sql.DB, error) {
 	return sql.Open(
 		"postgres",
 		fmt.Sprintf("host=%s dbname=%s user=%s password=%s sslmode=disable", host, dbname, user, password))
+}
+
+func Handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Vercel Serverless Functions Go Example")
 }
 
 func main() {
