@@ -13,5 +13,5 @@ func NewHealthCheckController() *HealthCheckController {
 }
 
 func (controller *HealthCheckController) HealthCheck(ctx *gin.Context) {
-	ctx.IndentedJSON(http.StatusOK, "OK")
+	ctx.String(http.StatusOK, "OK")
 }

@@ -1,15 +1,20 @@
-package main
+package handler
 
 import (
 	"database/sql"
 	"example/web-service-gin/src/presentation/controller"
 	"example/web-service-gin/src/repository/postgres/repository"
-	album_uc "example/web-service-gin/src/usecase/album"
 	"fmt"
 	"net/http"
 	"os"
 
+	album_uc "example/web-service-gin/src/usecase/album"
+
 	"github.com/gin-gonic/gin"
+)
+
+var (
+	app *gin.Engine
 )
 
 func generateDB() (*sql.DB, error) {
@@ -24,11 +29,11 @@ func generateDB() (*sql.DB, error) {
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Vercel Serverless Functions Go Example")
+	app.ServeHTTP(w, r)
 }
 
 func main() {
-	router := gin.Default()
+	app = gin.New()
 	db, dbErr := generateDB()
 	if dbErr != nil {
 		panic("failed database connection")
@@ -48,12 +53,14 @@ func main() {
 	)
 	healthCheckCon := controller.NewHealthCheckController()
 
-	router.GET("/albums", albumCon.ListAlbums)
-	router.GET("/albums/:id", albumCon.GetAlbumByID)
-	router.POST("/albums", albumCon.CreateAlbum)
-	router.PUT("/albums", albumCon.UpdateAlbum)
-	router.DELETE("/albums/:id", albumCon.DeleteAlbum)
-	router.GET("/health", healthCheckCon.HealthCheck)
+	app.GET("/albums", albumCon.ListAlbums)
+	app.GET("/albums/:id", albumCon.GetAlbumByID)
+	app.POST("/albums", albumCon.CreateAlbum)
+	app.PUT("/albums", albumCon.UpdateAlbum)
+	app.DELETE("/albums/:id", albumCon.DeleteAlbum)
+	app.GET("/health", healthCheckCon.HealthCheck)
+}
 
-	router.Run("localhost:8080")
+func init() {
+	main()
 }

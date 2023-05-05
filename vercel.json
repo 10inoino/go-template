@@ -1,7 +1,14 @@
 {
-    "version": 2,
-    "name": "go",
-    "builds": [
-      { "src": "handler/*.go", "use": "@vercel/go" }
-    ]
-  }
+  "version": 2,
+  "builds": [
+    { "src": "*.go", "use": "@vercel/go" }
+  ],
+	"trailingSlash":false,
+	"rewrites":
+	[
+		{
+			"source":"/(.*)",
+			"destination":"main.go"
+		}
+	]
+}
