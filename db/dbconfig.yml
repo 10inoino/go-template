@@ -1,4 +1,9 @@
-development:
+postgres-dev:
     dialect: postgres
-    datasource: host=${PSQL_HOST} dbname=${PSQL_DBNAME} user=${PSQL_USER} password=${PSQL_PASS} sslmode=disable
-    dir: migrations
+    datasource: host=${PSQL_HOST} dbname=${DB_NAME} user=${DB_USER} password=${DB_PASS} sslmode=disable
+    dir: migrations/postgres
+
+mysql-dev:
+    dialect: mysql
+    datasource: ${DB_USER}:${DB_PASS}@tcp(${MYSQL_HOST}:3306)/${DB_NAME}?charset=utf8&parseTime=true
+    dir: migrations/my_sql
