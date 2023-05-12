@@ -67,5 +67,5 @@ func main() {
 	app.DELETE("/albums/:id", albumCon.DeleteAlbum)
 	app.GET("/health", healthCheckCon.HealthCheck)
 
-	app.Run("localhost:8080")
+	app.Run(":8080")
 }

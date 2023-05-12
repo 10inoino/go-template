@@ -11,7 +11,7 @@ RUN curl https://deb.nodesource.com/setup_20.x | bash
 RUN curl https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 
-RUN apt-get update && apt-get install -y nodejs yarn
+RUN apt-get update && apt-get install -y nodejs yarn apt-transport-https ca-certificates gnupg
 
 # プロンプト設定
 RUN echo "source /usr/share/bash-completion/completions/git" >> ~/.bashrc
@@ -37,3 +37,7 @@ RUN go install github.com/go-delve/delve/cmd/dlv@latest
 
 # 必要なNodeのパッケージの追加（vercel）
 RUN yarn global add vercel
+
+RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+RUN apt-get update && apt-get install google-cloud-cli
