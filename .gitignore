@@ -2,3 +2,4 @@
 /.devcontainer/credentials
 __debug_bin
 .vercel
+.env
