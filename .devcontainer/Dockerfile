@@ -35,9 +35,10 @@ RUN go install github.com/volatiletech/sqlboiler/v4@latest
 RUN go install github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-mysql@latest
 RUN go install github.com/go-delve/delve/cmd/dlv@latest
 
-# 必要なNodeのパッケージの追加（vercel）
-RUN yarn global add vercel
-
 RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
 RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-RUN apt-get update && apt-get install google-cloud-cli
+RUN apt-get update && apt-get install -y google-cloud-cli mariadb-client
+
+# planetscale CLIのインストール
+RUN curl -OL https://github.com/planetscale/cli/releases/download/v0.142.0/pscale_0.142.0_linux_arm64.deb
+RUN dpkg -i pscale_0.142.0_linux_arm64.deb
