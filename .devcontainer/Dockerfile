@@ -31,7 +31,7 @@ RUN echo 'export PS1="\[\033[01;32m\]\u@\h\[\033[01;33m\] \w \[\033[01;31m\]\$(_
 RUN go install golang.org/x/tools/gopls@latest
 RUN go install github.com/rubenv/sql-migrate/...@latest
 RUN go install github.com/volatiletech/sqlboiler/v4@latest
-RUN go install github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-psql@latest
+# RUN go install github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-psql@latest
 RUN go install github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-mysql@latest
 RUN go install github.com/go-delve/delve/cmd/dlv@latest
 

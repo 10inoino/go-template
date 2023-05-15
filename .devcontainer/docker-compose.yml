@@ -15,6 +15,7 @@ services:
       DB_USER: ${SERVICE_NAME}
       DB_PASS: password
       ENV: local
+      DSN: ${DSN}
   postgresql:
     env_file:
       - .env

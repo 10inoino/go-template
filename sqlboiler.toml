@@ -1,4 +1,3 @@
-output   = "web-service-gin/db/models"
 wipe     = true
 no-tests = true
 add-enum-types = true
@@ -6,3 +5,14 @@ add-enum-types = true
 [psql]
   sslmode = "disable"
   blacklist = ["gorp_migrations"]
+  output = "db/postgres/models"
+
+[mysql]
+  dbname  = "go-template"
+  host    = "mysql"
+  user    = "go-template"
+  pass    = "password"
+  sslmode = "false"
+  blacklist = ["gorp_migrations"]
+  port    = 3306
+  output = "db/mysql/models"

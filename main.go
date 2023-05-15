@@ -10,6 +10,7 @@ import (
 	album_uc "example/web-service-gin/src/usecase/album"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 // TODO:他のディレクトリに移動
@@ -22,26 +23,20 @@ func setUpPostgres() (*sql.DB, error) {
 	db, err := sql.Open(
 		"postgres",
 		fmt.Sprintf("host=%s dbname=%s user=%s password=%s sslmode=disable", host, dbname, user, password))
-	defer db.Close()
 	return db, err
 }
 
 func setUpMySQL() (*sql.DB, error) {
-	host := os.Getenv("MYSQL_HOST")
-	dbname := os.Getenv("DB_NAME")
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASS")
-
+	dsn := os.Getenv("DSN")
 	db, err := sql.Open(
 		"mysql",
-		fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?charset=utf8&parseTime=true", user, password, host, dbname))
-	defer db.Close()
+		fmt.Sprintf("%s&charset=utf8&parseTime=true", dsn))
 	return db, err
 }
 
 func main() {
 	app := gin.Default()
-	db, dbErr := setUpPostgres()
+	db, dbErr := setUpMySQL()
 	if dbErr != nil {
 		panic("failed database connection")
 	}
