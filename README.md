@@ -10,3 +10,7 @@
 3. devcontainerで立ち上げる
 4. `cd bd/ && make migrate`
 5. 開発スタート
+
+# 参考資料
+- CloudRunについて
+  - https://cloud.google.com/run/docs/quickstarts/build-and-deploy/deploy-go-service?hl=ja
