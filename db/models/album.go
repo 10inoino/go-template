@@ -110,10 +110,10 @@ var AlbumWhere = struct {
 	Artist whereHelperstring
 	Price  whereHelperint
 }{
-	ID:     whereHelperstring{field: "`album`.`id`"},
-	Title:  whereHelperstring{field: "`album`.`title`"},
-	Artist: whereHelperstring{field: "`album`.`artist`"},
-	Price:  whereHelperint{field: "`album`.`price`"},
+	ID:     whereHelperstring{field: "\"album\".\"id\""},
+	Title:  whereHelperstring{field: "\"album\".\"title\""},
+	Artist: whereHelperstring{field: "\"album\".\"artist\""},
+	Price:  whereHelperint{field: "\"album\".\"price\""},
 }
 
 // AlbumRels is where relationship names are stored.
@@ -420,10 +420,10 @@ func (q albumQuery) Exists(ctx context.Context, exec boil.ContextExecutor) (bool
 
 // Albums retrieves all the records using an executor.
 func Albums(mods ...qm.QueryMod) albumQuery {
-	mods = append(mods, qm.From("`album`"))
+	mods = append(mods, qm.From("\"album\""))
 	q := NewQuery(mods...)
 	if len(queries.GetSelect(q)) == 0 {
-		queries.SetSelect(q, []string{"`album`.*"})
+		queries.SetSelect(q, []string{"\"album\".*"})
 	}
 
 	return albumQuery{q}
@@ -439,7 +439,7 @@ func FindAlbum(ctx context.Context, exec boil.ContextExecutor, iD string, select
 		sel = strings.Join(strmangle.IdentQuoteSlice(dialect.LQ, dialect.RQ, selectCols), ",")
 	}
 	query := fmt.Sprintf(
-		"select %s from `album` where `id`=?", sel,
+		"select %s from \"album\" where \"id\"=$1", sel,
 	)
 
 	q := queries.Raw(query, iD)
@@ -496,15 +496,15 @@ func (o *Album) Insert(ctx context.Context, exec boil.ContextExecutor, columns b
 			return err
 		}
 		if len(wl) != 0 {
-			cache.query = fmt.Sprintf("INSERT INTO `album` (`%s`) %%sVALUES (%s)%%s", strings.Join(wl, "`,`"), strmangle.Placeholders(dialect.UseIndexPlaceholders, len(wl), 1, 1))
+			cache.query = fmt.Sprintf("INSERT INTO \"album\" (\"%s\") %%sVALUES (%s)%%s", strings.Join(wl, "\",\""), strmangle.Placeholders(dialect.UseIndexPlaceholders, len(wl), 1, 1))
 		} else {
-			cache.query = "INSERT INTO `album` () VALUES ()%s%s"
+			cache.query = "INSERT INTO \"album\" %sDEFAULT VALUES%s"
 		}
 
 		var queryOutput, queryReturning string
 
 		if len(cache.retMapping) != 0 {
-			cache.retQuery = fmt.Sprintf("SELECT `%s` FROM `album` WHERE %s", strings.Join(returnColumns, "`,`"), strmangle.WhereClause("`", "`", 0, albumPrimaryKeyColumns))
+			queryReturning = fmt.Sprintf(" RETURNING \"%s\"", strings.Join(returnColumns, "\",\""))
 		}
 
 		cache.query = fmt.Sprintf(cache.query, queryOutput, queryReturning)
@@ -518,33 +518,17 @@ func (o *Album) Insert(ctx context.Context, exec boil.ContextExecutor, columns b
 		fmt.Fprintln(writer, cache.query)
 		fmt.Fprintln(writer, vals)
 	}
-	_, err = exec.ExecContext(ctx, cache.query, vals...)
+
+	if len(cache.retMapping) != 0 {
+		err = exec.QueryRowContext(ctx, cache.query, vals...).Scan(queries.PtrsFromMapping(value, cache.retMapping)...)
+	} else {
+		_, err = exec.ExecContext(ctx, cache.query, vals...)
+	}
 
 	if err != nil {
 		return errors.Wrap(err, "models: unable to insert into album")
 	}
 
-	var identifierCols []interface{}
-
-	if len(cache.retMapping) == 0 {
-		goto CacheNoHooks
-	}
-
-	identifierCols = []interface{}{
-		o.ID,
-	}
-
-	if boil.IsDebug(ctx) {
-		writer := boil.DebugWriterFrom(ctx)
-		fmt.Fprintln(writer, cache.retQuery)
-		fmt.Fprintln(writer, identifierCols...)
-	}
-	err = exec.QueryRowContext(ctx, cache.retQuery, identifierCols...).Scan(queries.PtrsFromMapping(value, cache.retMapping)...)
-	if err != nil {
-		return errors.Wrap(err, "models: unable to populate default values for album")
-	}
-
-CacheNoHooks:
 	if !cached {
 		albumInsertCacheMut.Lock()
 		albumInsertCache[key] = cache
@@ -580,9 +564,9 @@ func (o *Album) Update(ctx context.Context, exec boil.ContextExecutor, columns b
 			return 0, errors.New("models: unable to update album, could not build whitelist")
 		}
 
-		cache.query = fmt.Sprintf("UPDATE `album` SET %s WHERE %s",
-			strmangle.SetParamNames("`", "`", 0, wl),
-			strmangle.WhereClause("`", "`", 0, albumPrimaryKeyColumns),
+		cache.query = fmt.Sprintf("UPDATE \"album\" SET %s WHERE %s",
+			strmangle.SetParamNames("\"", "\"", 1, wl),
+			strmangle.WhereClause("\"", "\"", len(wl)+1, albumPrimaryKeyColumns),
 		)
 		cache.valueMapping, err = queries.BindMapping(albumType, albumMapping, append(wl, albumPrimaryKeyColumns...))
 		if err != nil {
@@ -661,9 +645,9 @@ func (o AlbumSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, co
 		args = append(args, pkeyArgs...)
 	}
 
-	sql := fmt.Sprintf("UPDATE `album` SET %s WHERE %s",
-		strmangle.SetParamNames("`", "`", 0, colNames),
-		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), 0, albumPrimaryKeyColumns, len(o)))
+	sql := fmt.Sprintf("UPDATE \"album\" SET %s WHERE %s",
+		strmangle.SetParamNames("\"", "\"", 1, colNames),
+		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), len(colNames)+1, albumPrimaryKeyColumns, len(o)))
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -682,13 +666,9 @@ func (o AlbumSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, co
 	return rowsAff, nil
 }
 
-var mySQLAlbumUniqueColumns = []string{
-	"id",
-}
-
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
 // See boil.Columns documentation for how to properly use updateColumns and insertColumns.
-func (o *Album) Upsert(ctx context.Context, exec boil.ContextExecutor, updateColumns, insertColumns boil.Columns) error {
+func (o *Album) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
 	if o == nil {
 		return errors.New("models: no album provided for upsert")
 	}
@@ -698,14 +678,19 @@ func (o *Album) Upsert(ctx context.Context, exec boil.ContextExecutor, updateCol
 	}
 
 	nzDefaults := queries.NonZeroDefaultSet(albumColumnsWithDefault, o)
-	nzUniques := queries.NonZeroDefaultSet(mySQLAlbumUniqueColumns, o)
-
-	if len(nzUniques) == 0 {
-		return errors.New("cannot upsert with a table that cannot conflict on a unique column")
-	}
 
 	// Build cache key in-line uglily - mysql vs psql problems
 	buf := strmangle.GetBuffer()
+	if updateOnConflict {
+		buf.WriteByte('t')
+	} else {
+		buf.WriteByte('f')
+	}
+	buf.WriteByte('.')
+	for _, c := range conflictColumns {
+		buf.WriteString(c)
+	}
+	buf.WriteByte('.')
 	buf.WriteString(strconv.Itoa(updateColumns.Kind))
 	for _, c := range updateColumns.Cols {
 		buf.WriteString(c)
@@ -717,10 +702,6 @@ func (o *Album) Upsert(ctx context.Context, exec boil.ContextExecutor, updateCol
 	}
 	buf.WriteByte('.')
 	for _, c := range nzDefaults {
-		buf.WriteString(c)
-	}
-	buf.WriteByte('.')
-	for _, c := range nzUniques {
 		buf.WriteString(c)
 	}
 	key := buf.String()
@@ -745,17 +726,16 @@ func (o *Album) Upsert(ctx context.Context, exec boil.ContextExecutor, updateCol
 			albumPrimaryKeyColumns,
 		)
 
-		if !updateColumns.IsNone() && len(update) == 0 {
+		if updateOnConflict && len(update) == 0 {
 			return errors.New("models: unable to upsert album, could not build update column list")
 		}
 
-		ret = strmangle.SetComplement(ret, nzUniques)
-		cache.query = buildUpsertQueryMySQL(dialect, "`album`", update, insert)
-		cache.retQuery = fmt.Sprintf(
-			"SELECT %s FROM `album` WHERE %s",
-			strings.Join(strmangle.IdentQuoteSlice(dialect.LQ, dialect.RQ, ret), ","),
-			strmangle.WhereClause("`", "`", 0, nzUniques),
-		)
+		conflict := conflictColumns
+		if len(conflict) == 0 {
+			conflict = make([]string, len(albumPrimaryKeyColumns))
+			copy(conflict, albumPrimaryKeyColumns)
+		}
+		cache.query = buildUpsertQueryPostgres(dialect, "\"album\"", updateOnConflict, ret, update, conflict, insert)
 
 		cache.valueMapping, err = queries.BindMapping(albumType, albumMapping, insert)
 		if err != nil {
@@ -781,36 +761,18 @@ func (o *Album) Upsert(ctx context.Context, exec boil.ContextExecutor, updateCol
 		fmt.Fprintln(writer, cache.query)
 		fmt.Fprintln(writer, vals)
 	}
-	_, err = exec.ExecContext(ctx, cache.query, vals...)
-
+	if len(cache.retMapping) != 0 {
+		err = exec.QueryRowContext(ctx, cache.query, vals...).Scan(returns...)
+		if errors.Is(err, sql.ErrNoRows) {
+			err = nil // Postgres doesn't return anything when there's no update
+		}
+	} else {
+		_, err = exec.ExecContext(ctx, cache.query, vals...)
+	}
 	if err != nil {
-		return errors.Wrap(err, "models: unable to upsert for album")
+		return errors.Wrap(err, "models: unable to upsert album")
 	}
 
-	var uniqueMap []uint64
-	var nzUniqueCols []interface{}
-
-	if len(cache.retMapping) == 0 {
-		goto CacheNoHooks
-	}
-
-	uniqueMap, err = queries.BindMapping(albumType, albumMapping, nzUniques)
-	if err != nil {
-		return errors.Wrap(err, "models: unable to retrieve unique values for album")
-	}
-	nzUniqueCols = queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(o)), uniqueMap)
-
-	if boil.IsDebug(ctx) {
-		writer := boil.DebugWriterFrom(ctx)
-		fmt.Fprintln(writer, cache.retQuery)
-		fmt.Fprintln(writer, nzUniqueCols...)
-	}
-	err = exec.QueryRowContext(ctx, cache.retQuery, nzUniqueCols...).Scan(returns...)
-	if err != nil {
-		return errors.Wrap(err, "models: unable to populate default values for album")
-	}
-
-CacheNoHooks:
 	if !cached {
 		albumUpsertCacheMut.Lock()
 		albumUpsertCache[key] = cache
@@ -832,7 +794,7 @@ func (o *Album) Delete(ctx context.Context, exec boil.ContextExecutor) (int64, e
 	}
 
 	args := queries.ValuesFromMapping(reflect.Indirect(reflect.ValueOf(o)), albumPrimaryKeyMapping)
-	sql := "DELETE FROM `album` WHERE `id`=?"
+	sql := "DELETE FROM \"album\" WHERE \"id\"=$1"
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -897,8 +859,8 @@ func (o AlbumSlice) DeleteAll(ctx context.Context, exec boil.ContextExecutor) (i
 		args = append(args, pkeyArgs...)
 	}
 
-	sql := "DELETE FROM `album` WHERE " +
-		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), 0, albumPrimaryKeyColumns, len(o))
+	sql := "DELETE FROM \"album\" WHERE " +
+		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), 1, albumPrimaryKeyColumns, len(o))
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)
@@ -952,8 +914,8 @@ func (o *AlbumSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) e
 		args = append(args, pkeyArgs...)
 	}
 
-	sql := "SELECT `album`.* FROM `album` WHERE " +
-		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), 0, albumPrimaryKeyColumns, len(*o))
+	sql := "SELECT \"album\".* FROM \"album\" WHERE " +
+		strmangle.WhereClauseRepeated(string(dialect.LQ), string(dialect.RQ), 1, albumPrimaryKeyColumns, len(*o))
 
 	q := queries.Raw(sql, args...)
 
@@ -970,7 +932,7 @@ func (o *AlbumSlice) ReloadAll(ctx context.Context, exec boil.ContextExecutor) e
 // AlbumExists checks if the Album row exists.
 func AlbumExists(ctx context.Context, exec boil.ContextExecutor, iD string) (bool, error) {
 	var exists bool
-	sql := "select exists(select 1 from `album` where `id`=? limit 1)"
+	sql := "select exists(select 1 from \"album\" where \"id\"=$1 limit 1)"
 
 	if boil.IsDebug(ctx) {
 		writer := boil.DebugWriterFrom(ctx)

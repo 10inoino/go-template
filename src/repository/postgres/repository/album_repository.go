@@ -7,9 +7,8 @@ import (
 	repository_interface "example/web-service-gin/src/repository/interface"
 
 	"github.com/gin-gonic/gin"
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 
-	// _ "github.com/lib/pq"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 )
 

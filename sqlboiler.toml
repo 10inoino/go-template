@@ -1,11 +1,10 @@
 wipe     = true
 no-tests = true
 add-enum-types = true
+output = "db/models"
 
 [psql]
-  sslmode = "disable"
   blacklist = ["gorp_migrations"]
-  output = "db/postgres/models"
 
 [mysql]
   dbname  = "go-template"
@@ -15,4 +14,3 @@ add-enum-types = true
   sslmode = "false"
   blacklist = ["gorp_migrations"]
   port    = 3306
-  output = "db/mysql/models"

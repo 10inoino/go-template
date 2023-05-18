@@ -1,9 +1,9 @@
-postgres-dev:
+postgres:
     dialect: postgres
-    datasource: host=${PSQL_HOST} dbname=${DB_NAME} user=${DB_USER} password=${DB_PASS} sslmode=disable
+    datasource: host=${PSQL_HOST} dbname=${PSQL_DBNAME} user=${PSQL_USER} password=${PSQL_PASS} sslmode=${PSQL_SSLMODE}
     dir: migrations/postgres
 
-mysql-dev:
+mysql:
     dialect: mysql
     datasource: ${DSN}&charset=utf8&parseTime=true
     dir: migrations/my_sql

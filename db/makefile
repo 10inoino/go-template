@@ -1,5 +1,5 @@
-migrate-postgres-dev:
-	sql-migrate up -env="postgres-dev" 
+migrate-psql:
+	sql-migrate up -env="postgres"
 
-migrate-mysql-dev:
-	sql-migrate up -env="mysql-dev"
+migrate-mysql:
+	sql-migrate up -env="mysql"

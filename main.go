@@ -10,19 +10,20 @@ import (
 	album_uc "example/web-service-gin/src/usecase/album"
 
 	"github.com/gin-gonic/gin"
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 )
 
 // TODO:他のディレクトリに移動
 func setUpPostgres() (*sql.DB, error) {
 	host := os.Getenv("PSQL_HOST")
-	dbname := os.Getenv("DB_NAME")
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASS")
+	dbname := os.Getenv("PSQL_DBNAME")
+	user := os.Getenv("PSQL_USER")
+	password := os.Getenv("PSQL_PASS")
+	sslmode := os.Getenv("PSQL_SSLMODE")
 
 	db, err := sql.Open(
 		"postgres",
-		fmt.Sprintf("host=%s dbname=%s user=%s password=%s sslmode=disable", host, dbname, user, password))
+		fmt.Sprintf("host=%s dbname=%s user=%s password=%s sslmode=%s", host, dbname, user, password, sslmode))
 	return db, err
 }
 
@@ -36,9 +37,9 @@ func setUpMySQL() (*sql.DB, error) {
 
 func main() {
 	app := gin.Default()
-	db, dbErr := setUpMySQL()
+	db, dbErr := setUpPostgres()
 	if dbErr != nil {
-		panic("failed database connection")
+		panic(fmt.Sprintf("failed to connect database: %v", dbErr))
 	}
 	albumRepo := repository.NewAlbumRepository(db)
 	createAlbumUsecase := album_uc.NewCreateAlbumUsecase(albumRepo)

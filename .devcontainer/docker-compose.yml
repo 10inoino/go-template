@@ -8,14 +8,11 @@ services:
     volumes:
       - ../:/workspaces
     environment:
-      DB_NAME: ${SERVICE_NAME}
-      PSQL_HOST: postgresql
-      MYSQL_HOST: mysql
-      DB_PORT: 5432
-      DB_USER: ${SERVICE_NAME}
-      DB_PASS: password
-      ENV: local
-      DSN: ${DSN}
+      PSQL_DBNAME: ${PSQL_DBNAME}
+      PSQL_HOST: ${PSQL_HOST}
+      PSQL_USER: ${PSQL_USER}
+      PSQL_PASS: ${PSQL_PASSWORD}
+      PSQL_SSLMODE: ${PSQL_SSLMODE}
   postgresql:
     env_file:
       - .env
