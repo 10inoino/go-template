@@ -12,13 +12,13 @@ type UpdateAlbumUsecase struct {
 
 func NewUpdateAlbumUsecase(
 	albumRepo repository_interface.AlbumRepository,
-) *UpdateAlbumUsecase {
-	return &UpdateAlbumUsecase{
+) UpdateAlbumUsecase {
+	return UpdateAlbumUsecase{
 		albumRepo: albumRepo,
 	}
 }
 
-func (usecase *UpdateAlbumUsecase) Execute(
+func (usecase UpdateAlbumUsecase) Execute(
 	ctx *gin.Context,
 	id string,
 	title string,

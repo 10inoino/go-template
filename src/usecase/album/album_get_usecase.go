@@ -13,13 +13,13 @@ type GetAlbumUsecase struct {
 
 func NewGetAlbumUsecase(
 	albumRepo repository_interface.AlbumRepository,
-) *GetAlbumUsecase {
-	return &GetAlbumUsecase{
+) GetAlbumUsecase {
+	return GetAlbumUsecase{
 		albumRepo: albumRepo,
 	}
 }
 
-func (usecase *GetAlbumUsecase) Execute(
+func (usecase GetAlbumUsecase) Execute(
 	ctx *gin.Context,
 	id string,
 ) (*domain.Album, error) {

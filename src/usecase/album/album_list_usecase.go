@@ -13,13 +13,13 @@ type ListAlbumUsecase struct {
 
 func NewListAlbumUsecase(
 	albumRepo repository_interface.AlbumRepository,
-) *ListAlbumUsecase {
-	return &ListAlbumUsecase{
+) ListAlbumUsecase {
+	return ListAlbumUsecase{
 		albumRepo: albumRepo,
 	}
 }
 
-func (usecase *ListAlbumUsecase) Execute(
+func (usecase ListAlbumUsecase) Execute(
 	ctx *gin.Context,
 ) (*[]domain.Album, error) {
 	albums, err := usecase.albumRepo.FindAll(ctx)

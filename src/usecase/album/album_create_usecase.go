@@ -13,13 +13,13 @@ type CreateAlbumUsecase struct {
 
 func NewCreateAlbumUsecase(
 	albumRepo repository_interface.AlbumRepository,
-) *CreateAlbumUsecase {
-	return &CreateAlbumUsecase{
+) CreateAlbumUsecase {
+	return CreateAlbumUsecase{
 		albumRepo: albumRepo,
 	}
 }
 
-func (usecase *CreateAlbumUsecase) Execute(
+func (usecase CreateAlbumUsecase) Execute(
 	ctx *gin.Context,
 	id string,
 	title string,

@@ -8,10 +8,10 @@ import (
 
 type HealthCheckController struct{}
 
-func NewHealthCheckController() *HealthCheckController {
-	return &HealthCheckController{}
+func NewHealthCheckController() HealthCheckController {
+	return HealthCheckController{}
 }
 
-func (controller *HealthCheckController) HealthCheck(ctx *gin.Context) {
+func (controller HealthCheckController) HealthCheck(ctx *gin.Context) {
 	ctx.String(http.StatusOK, "OK")
 }

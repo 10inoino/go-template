@@ -12,13 +12,13 @@ type DeleteAlbumUsecase struct {
 
 func NewDeleteAlbumUsecase(
 	albumRepo repository_interface.AlbumRepository,
-) *DeleteAlbumUsecase {
-	return &DeleteAlbumUsecase{
+) DeleteAlbumUsecase {
+	return DeleteAlbumUsecase{
 		albumRepo: albumRepo,
 	}
 }
 
-func (usecase *DeleteAlbumUsecase) Execute(
+func (usecase DeleteAlbumUsecase) Execute(
 	ctx *gin.Context,
 	id string,
 ) error {
