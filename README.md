@@ -14,3 +14,8 @@
 # 参考資料
 - CloudRunについて
   - https://cloud.google.com/run/docs/quickstarts/build-and-deploy/deploy-go-service?hl=ja
+
+#　やりたいこと
+- [ ] インフラのTerraform化
+- [ ] 単体テスト作成
+- [ ] マイグレーションをCIに組み込む
